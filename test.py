@@ -1,6 +1,7 @@
 import pyargv
 
 
+@pyargv.argvlist()
 def main():
     print("hello world")
 
