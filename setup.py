@@ -15,6 +15,5 @@ setup(
     author_email='asirlu@foxmail.com',
     url='https://github.com/lsj9383/pyargv',
     # license=license,
-    # scripts=["./pyargv.py"]
-    # packages=find_packages(exclude=('tests', 'docs'))
+    packages=find_packages(exclude=('tests', 'docs'))
 )
