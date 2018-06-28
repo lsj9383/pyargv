@@ -59,14 +59,20 @@ def __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
         if key in kws:
             kws[key] = val
     
-
-def argvload(argvlist=(), help=False):
+__unique__ = 0
+def parse(argvlist=(), help=False):
+    global __unique__
+    if __unique__:
+        raise Exception("'parse'方法仅能调用一次")
+    __unique__ = 1
+    # 将argvlist进行分发
     bool_argvlist = [argv for argv in argvlist if isinstance(argv, Boolean)]
     kv_argvlist = [argv for argv in argvlist if isinstance(argv, KeyValue)]
     norm_argvlist = [argv for argv in argvlist if isinstance(argv, Argv)]
     def wrapper(f):
         @wraps(f)
         def inner(*args, **kws):
+            # 根据argvlist的内容，装载kws
             __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist)
             return f(*args, **kws)
         return inner

@@ -1,7 +1,7 @@
 import pyargv
 
 
-@pyargv.argvload((
+@pyargv.parse((
     pyargv.Argv("origin"),
     pyargv.Argv("to"),
     pyargv.Argv("alpha", 13),
