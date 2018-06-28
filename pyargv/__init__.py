@@ -110,6 +110,7 @@ def parse(argvlist=(), help=False):
     if __unique__:
         raise Exception("'parse'方法仅能调用一次")
     __unique__ = 1
+    
     # 检验参数构造
     __verify__(argvlist)
 
