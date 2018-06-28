@@ -1,19 +1,16 @@
 import pyargv
 
-
 @pyargv.parse((
-    pyargv.Argv("origin"),
-    pyargv.Argv("to"),
-    pyargv.Argv("alpha", 13),
-    pyargv.KeyValue("beta", "-b", 456),
-    pyargv.Boolean("debug"),
+    pyargv.Argv("filename"),            # 不带默认参数的普通参数
+    pyargv.Argv("alpha", 13),           # 含有默认参数的普通参数
+    pyargv.KeyValue("beta", "-b"),      # 关键词参数
+    pyargv.Boolean("debug"),            # 布尔参数
     ))
-def main(origin, to, alpha, beta, debug):
-    print("origin:", origin)
-    print("to:", to)
+def main(filename, alpha, beta, debug):
+    print("filename:", filename)
     print("alpha:", alpha)
     print("beta:", beta)
     print("debug:", debug)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
