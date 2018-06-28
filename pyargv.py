@@ -21,14 +21,17 @@ class BaseArgv:
     def valtype(self):
         return self.__type__
 
+# 普通参数
 class Argv(BaseArgv):
     def __init__(self, key, default=None, valtype=str):
         super().__init__(key, default, valtype)
-        
+
+# 布尔型参数
 class Boolean(BaseArgv):
     def __init__(self, key, default=False):
         super().__init__(key, default, bool)
 
+# kv对参数
 class KeyValue(BaseArgv):
     def __init__(self, key, nick=None, default=None, valtype=str):
         super().__init__(key, default, valtype)
@@ -46,6 +49,7 @@ def __refactor_cmdargv__(kv_argvlist):
     cmdargv = argvline.split(" ")
     return cmdargv
 
+# 将参数的默认值进行载入
 __normal_argv_keys__ = []
 def __load_default__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
     for argv in norm_argvlist:
@@ -56,6 +60,7 @@ def __load_default__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
     for argv in kv_argvlist:
         kws[argv.key] = argv.default
 
+# kws填充
 def __fill_kws__(kws, normargs, boolargs, mapargs):
     for idx, argv in enumerate(normargs):
         key = __normal_argv_keys__[idx]
@@ -69,8 +74,11 @@ def __fill_kws__(kws, normargs, boolargs, mapargs):
         if key in kws:
             kws[key] = val
 
+# 构造kws
 def __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
     cmdargv = __refactor_cmdargv__(kv_argvlist)
+
+    # 命令行参数类型区分
     normargs = [argv for argv in cmdargv if (not argv.startswith("--")) and (not ":" in argv)]
     boolargs = [argv for argv in cmdargv if argv.startswith("--")]
     mapargs = [argv for argv in cmdargv if ":" in argv]
