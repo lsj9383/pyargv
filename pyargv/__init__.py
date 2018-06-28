@@ -88,13 +88,31 @@ def __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
 
     # kws中载入实际参数
     __fill_kws__(kws, normargs, boolargs, mapargs)
-    
+
+def __verify__(argvlist):
+    s = set()
+    if (not isinstance(argvlist, tuple)) and (not isinstance(argvlist, list)):
+        raise Exception("should input tuple or list")
+
+    for argv in argvlist:
+        # tuple or list中的元素不是BaseArgv
+        if not isinstance(argv, BaseArgv):
+            raise Exception("the argv element not is BaseArgv")
+
+        # BaseArgv同key
+        if argv.key in s:
+            raise Exception("can't use the same key")
+        s.add(argv.key)
+
 __unique__ = 0
 def parse(argvlist=(), help=False):
     global __unique__
     if __unique__:
         raise Exception("'parse'方法仅能调用一次")
     __unique__ = 1
+    # 检验参数构造
+    __verify__(argvlist)
+
     # 将argvlist进行分发
     bool_argvlist = [argv for argv in argvlist if isinstance(argv, Boolean)]
     kv_argvlist = [argv for argv in argvlist if isinstance(argv, KeyValue)]
