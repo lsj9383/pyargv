@@ -7,7 +7,7 @@ class BaseArgv:
     def __init__(self, key, *, default, valtype, ed=None):
         self.__key__ = key
         self.__default__ = default
-        self.__type__ = valtype
+        self.__valtype__ = valtype
         # error-description 缺少该参数时的错误描述信息
         self.__ed__ = ed if ed else "missing 1 required argument:'{key}'".format(key=key)
 
@@ -21,7 +21,7 @@ class BaseArgv:
 
     @property
     def valtype(self):
-        return self.__type__
+        return self.__valtype__
 
     @property
     def ed(self):
@@ -92,6 +92,11 @@ def __verify_missing_argv__(kws):
         if kws[k] is None:
             raise Exception(__argv_cache__[k].ed)
 
+# 转换为设定的类型
+def __convert_valtype__(kws):
+    for k in __argv_keys__:
+        kws[k] = __argv_cache__[k].valtype(kws[k])
+
 # 构造kws
 def __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
     # 重构命令行参数(根据kv参数的nick进行替换)
@@ -110,6 +115,9 @@ def __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
 
     # 验证是否有未输入的参数
     __verify_missing_argv__(kws)
+
+    # 类型转换
+    __convert_valtype__(kws)
 
 # 检查参数构造的合法性
 def __verify__(argvlist):

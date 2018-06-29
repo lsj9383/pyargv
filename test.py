@@ -3,16 +3,16 @@
 import pyargv
 
 @pyargv.parse(
-    pyargv.Argv("a", default="I'm a"),
+    pyargv.Argv("alpha", valtype=float),
     pyargv.KeyValue("name", "-n"),
-    pyargv.KeyValue("age", "-a", default="18"),
+    pyargv.KeyValue("age", "-a", default="18", valtype=int),
     pyargv.Boolean("debug"),
     )
-def main(a, name, age, debug):
-    print("a:", a)
-    print("name:", name)
-    print("age:", age)
-    print("debug:", debug)
+def main(alpha, name, age, debug):
+    print("alpha:", alpha, type(alpha))
+    print("name:", name, type(name))
+    print("age:", age, type(age))
+    print("debug:", debug, type(debug))
 
 if __name__ == '__main__':
     main()

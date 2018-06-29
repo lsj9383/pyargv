@@ -4,8 +4,8 @@
 * 布尔参数
 * 默认参数
 * 关键词参数
+* 类型转换
 * 自动生成帮助文档(*待续*)
-* 类型转换(*待续*)
 
 ## 一、安装
 下载本仓库，并进入仓库根目录，通过以下指令安装pyargv包:
@@ -203,4 +203,34 @@ a: I'm a
 name: hello
 age: 18
 debug: False
+```
+### 5.*类型转换*
+命令行参数输入的全是字符串，为了更好的应用这些参数，pyargv提供了类型转换的功能，可以将对应的字符串转换为对应的类型。位置参数和关键词参数都可以通过提供valtype来设置该参数的类型，在没有设置时valtype默认为`str`:
+```python
+# test.py
+
+import pyargv
+
+@pyargv.parse(
+    pyargv.Argv("alpha", valtype=float),
+    pyargv.KeyValue("name", "-n"),
+    pyargv.KeyValue("age", "-a", default="18", valtype=int),
+    pyargv.Boolean("debug"),
+    )
+def main(alpha, name, age, debug):
+    print("alpha:", alpha, type(alpha))
+    print("name:", name, type(name))
+    print("age:", age, type(age))
+    print("debug:", debug, type(debug))
+
+if __name__ == '__main__':
+    main()
+```
+在命令行传参后，pyargv会将参数字符串转换为其valtype所指定的类型，再交给被修饰的函数。
+```
+>> python test.py 1.3 -n hello
+alpha: 1.3 <class 'float'>
+name: hello <class 'str'>
+age: 18 <class 'int'>
+debug: False <class 'bool'>
 ```
