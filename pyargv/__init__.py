@@ -4,7 +4,7 @@ from functools import wraps
 
 # 抽象参数
 class BaseArgv:
-    def __init__(self, key, default, *, valtype, ed=None):
+    def __init__(self, key, *, default, valtype, ed=None):
         self.__key__ = key
         self.__default__ = default
         self.__type__ = valtype
@@ -29,7 +29,7 @@ class BaseArgv:
 
 # 普通参数
 class Argv(BaseArgv):
-    def __init__(self, key, default=None, *, valtype=str, ed=None):
+    def __init__(self, key, *, default=None, valtype=str, ed=None):
         super().__init__(key, default=default, valtype=valtype, ed=ed)
 
 # 布尔型参数
@@ -39,7 +39,7 @@ class Boolean(BaseArgv):
 
 # kv对参数
 class KeyValue(BaseArgv):
-    def __init__(self, key, nick=None, default=None, *, valtype=str, ed=None):
+    def __init__(self, key, nick=None, *, default=None, valtype=str, ed=None):
         super().__init__(key, default=default, valtype=valtype, ed=ed)
         self.__nick__ = nick
 
