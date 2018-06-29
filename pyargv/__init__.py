@@ -46,7 +46,7 @@ def __refactor_cmdargv__(kv_argvlist):
     argvline = " ".join(sys.argv[1:])
     for argv in kv_argvlist:
         argvline = argvline.replace(argv.nick+" ", argv.key+":")
-    cmdargv = argvline.split(" ")
+    cmdargv = argvline.split(" ") if argvline else []
     return cmdargv
 
 # 将参数的默认值进行载入
