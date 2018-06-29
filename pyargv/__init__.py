@@ -1,13 +1,15 @@
 import os
 import sys
 from functools import wraps
-from flask import Flask
 
+# 抽象参数
 class BaseArgv:
-    def __init__(self, key, default, valtype):
+    def __init__(self, key, default, *, valtype, ed=None):
         self.__key__ = key
         self.__default__ = default
         self.__type__ = valtype
+        # error-description 缺少该参数时的错误描述信息
+        self.__ed__ = ed if ed else "missing 1 required argument:'{key}'".format(key=key)
 
     @property
     def key(self):
@@ -21,20 +23,24 @@ class BaseArgv:
     def valtype(self):
         return self.__type__
 
+    @property
+    def ed(self):
+        return self.__ed__
+
 # 普通参数
 class Argv(BaseArgv):
-    def __init__(self, key, default=None, valtype=str):
-        super().__init__(key, default, valtype)
+    def __init__(self, key, default=None, *, valtype=str, ed=None):
+        super().__init__(key, default, valtype=valtype, ed=ed)
 
 # 布尔型参数
 class Boolean(BaseArgv):
-    def __init__(self, key, default=False):
-        super().__init__(key, default, bool)
+    def __init__(self, key, default=False, *, ed=None):
+        super().__init__(key, default, valtype=bool, ed=ed)
 
 # kv对参数
 class KeyValue(BaseArgv):
-    def __init__(self, key, nick=None, default=None, valtype=str):
-        super().__init__(key, default, valtype)
+    def __init__(self, key, nick=None, default=None, *, valtype=str, ed=None):
+        super().__init__(key, default, valtype=valtype, ed=ed)
         self.__nick__ = nick
 
     @property
@@ -50,20 +56,26 @@ def __refactor_cmdargv__(kv_argvlist):
     return cmdargv
 
 # 将参数的默认值进行载入
-__normal_argv_keys__ = []
+__argv_keys__ = []
+__argv_cache__ = {}
 def __load_default__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
     for argv in norm_argvlist:
         kws[argv.key] = argv.default
-        __normal_argv_keys__.append(argv.key)
+        __argv_cache__[argv.key] = argv
+        __argv_keys__.append(argv.key)
     for argv in bool_argvlist:
         kws[argv.key] = argv.default
+        __argv_cache__[argv.key] = argv
+        __argv_keys__.append(argv.key)
     for argv in kv_argvlist:
         kws[argv.key] = argv.default
+        __argv_cache__[argv.key] = argv
+        __argv_keys__.append(argv.key)
 
 # kws填充
 def __fill_kws__(kws, normargs, boolargs, mapargs):
     for idx, argv in enumerate(normargs):
-        key = __normal_argv_keys__[idx]
+        key = __argv_keys__[idx]
         kws[key] = normargs[idx]
     for argv in boolargs:
         kws[argv[2:]] = True if argv[2:] in argv else kws[argv[2:]]
@@ -74,8 +86,15 @@ def __fill_kws__(kws, normargs, boolargs, mapargs):
         if key in kws:
             kws[key] = val
 
+# 检查是否缺少参数
+def __verify_missing_argv__(kws):
+    for k in __argv_keys__:
+        if kws[k] is None:
+            raise Exception(__argv_cache__[k].ed)
+
 # 构造kws
 def __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
+    # 重构命令行参数(根据kv参数的nick进行替换)
     cmdargv = __refactor_cmdargv__(kv_argvlist)
 
     # 命令行参数类型区分
@@ -89,17 +108,22 @@ def __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
     # kws中载入实际参数
     __fill_kws__(kws, normargs, boolargs, mapargs)
 
+    # 验证是否有未输入的参数
+    __verify_missing_argv__(kws)
+
+# 检查参数构造的合法性
 def __verify__(argvlist):
     s = set()
+    # 1).检查参数是否为tuple
     if (not isinstance(argvlist, tuple)) and (not isinstance(argvlist, list)):
         raise Exception("should input tuple or list")
 
     for argv in argvlist:
-        # tuple or list中的元素不是BaseArgv
+        # 2).tuple or list中的元素不是BaseArgv
         if not isinstance(argv, BaseArgv):
             raise Exception("the argv element not is BaseArgv")
 
-        # BaseArgv同key
+        # 3).BaseArgv同key
         if argv.key in s:
             raise Exception("can't use the same key")
         s.add(argv.key)

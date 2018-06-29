@@ -26,8 +26,8 @@ import pyargv
 @pyargv.parse((
     pyargv.Argv("filename"),            # 不带默认参数的普通参数
     pyargv.Argv("alpha", 13),           # 含有默认参数的普通参数
-    pyargv.KeyValue("beta", "-b"),      # 关键词参数
-    pyargv.Boolean("debug"),            # 布尔参数
+    pyargv.KeyValue("beta", "-b"),      # 不带默认参数的关键词参数
+    pyargv.Boolean("debug"),            # 布尔参数(默认为False)
     ))
 def main(filename, alpha, beta, debug):
     print("filename:", filename)
@@ -36,7 +36,10 @@ def main(filename, alpha, beta, debug):
     print("debug:", debug)
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(e)
 ```
 在命令行中输入`python test.py lena.jpg -b 4 --debug`, 则在命令行中将会返回：
 ```
