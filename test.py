@@ -3,17 +3,15 @@
 import pyargv
 
 @pyargv.parse(
-    pyargv.Argv("a", default="I'm a"), 
-    pyargv.Argv("b", default="I'm b"),
-    pyargv.Boolean("debug"),
-    pyargv.Boolean("log"),
-    pyargv.Boolean("email"))
-def main(a, b, debug, log, email):
+    pyargv.Argv("a", default="I'm a"),
+    pyargv.KeyValue("name", "-n"),
+    pyargv.KeyValue("age", "-a", default="18"),
+    pyargv.Boolean("debug"))
+def main(a, name, age, debug):
     print("a:", a)
-    print("b:", b)
+    print("name:", name)
+    print("age:", age)
     print("debug:", debug)
-    print("log:", log)
-    print("email:", email)
 
 if __name__ == '__main__':
     main()

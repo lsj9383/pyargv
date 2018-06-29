@@ -5,6 +5,7 @@
 * 默认参数
 * 关键词参数
 * 自动生成帮助文档(*待续*)
+* 类型转换(*待续*)
 
 ## 一、安装
 下载本仓库，并进入仓库根目录，通过以下指令安装pyargv包:
@@ -67,7 +68,7 @@ pyargv.parse()装饰器提供了以下4种命令行参数接收方案。
 import pyargv
 
 @pyargv.parse(
-    pyargv.Argv("a"), 
+    pyargv.Argv("a"),
     pyargv.Argv("b"))
 def main(a, b):
     print("a:", a)
@@ -114,7 +115,7 @@ if __name__ == '__main__':
 import pyargv
 
 @pyargv.parse(
-    pyargv.Argv("a", default="I'm a"), 
+    pyargv.Argv("a", default="I'm a"),
     pyargv.Argv("b", default="I'm b"))
 def main(a, b):
     print("a:", a)
@@ -142,7 +143,7 @@ b: I'm b
 import pyargv
 
 @pyargv.parse(
-    pyargv.Argv("a", default="I'm a"), 
+    pyargv.Argv("a", default="I'm a"),
     pyargv.Argv("b", default="I'm b"),
     pyargv.Boolean("debug"),
     pyargv.Boolean("log"),
@@ -169,3 +170,38 @@ email: False
 ```
 另外，需要注意的时，布尔参数不受位置限制。这意味着在命令行参数列表中布尔参数可以写在任何位置，在命令行传参中也可以在任何位置写布尔参数。
 ### 4.*关键词参数*
+对于命令行传参，参数数量较多时，会非常影响可读性，也容易忘记哪个位置对应的是哪个参数。关键词参数传参在命令行中有两种表现形式:
+```
+>> python programe.py key:value
+>> python programe.py -key value
+```
+以上两种形式都能把value值传递给被修饰函数的名字为key的变量。关键词参数在参数列表中通过`pyargv.KeyValue`进行声明:
+```python
+# test.py
+
+import pyargv
+
+@pyargv.parse(
+    pyargv.Argv("a", default="I'm a"),
+    pyargv.KeyValue("name", "-n"),
+    pyargv.KeyValue("age", "-a", default="18"),
+    pyargv.Boolean("debug"))
+def main(a, name, age, debug):
+    print("a:", a)
+    print("name", name)
+    print("age", age)
+    print("debug:", debug)
+
+if __name__ == '__main__':
+    main()
+```
+关键词参数也可以通过default来设置默认值，对于不带默认值的关键词参数若在传参时没有给出参数，同样会抛出异常。在进行关键词参数传参时，其位置是任意的。
+```
+>> python3 test.py -n hello
+>> python3 test.py name:hello   # 和上一行等价
+
+a: I'm a
+name: hello
+age: 18
+debug: False
+```
