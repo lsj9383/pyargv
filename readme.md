@@ -1,6 +1,6 @@
 # PYARGV
 这是一个轻量级的Python命令行参数加载器，通过装饰器实现对命令行参数的解析和加载，当前版本支持以下参数加载功能:
-* 参数列表
+* 位置参数
 * 布尔参数
 * 默认参数
 * 关键词参数
@@ -23,12 +23,12 @@ import pyargv
 # test.py
 import pyargv
 
-@pyargv.parse((
+@pyargv.parse(
     pyargv.Argv("filename"),            # 不带默认参数的普通参数
     pyargv.Argv("alpha", 13),           # 含有默认参数的普通参数
     pyargv.KeyValue("beta", "-b"),      # 不带默认参数的关键词参数
     pyargv.Boolean("debug"),            # 布尔参数(默认为False)
-    ))
+    )
 def main(filename, alpha, beta, debug):
     print("filename:", filename)
     print("alpha:", alpha)
@@ -51,7 +51,8 @@ debug: True
 仅需要注意，Boolean类型的参数，载命令行中输入的时候，需要添加两个划线。
 
 ## 三、使用详情
-### 1.*参数列表*
+通过装饰器`@pyargv.parse()`提供对命令行输入的参数列表。
+### 1.*位置参数*
 ### 2.*布尔参数*
 ### 3.*默认参数*
 ### 4.*关键词参数*

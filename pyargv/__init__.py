@@ -129,7 +129,7 @@ def __verify__(argvlist):
         s.add(argv.key)
 
 __unique__ = 0
-def parse(argvlist=(), help=False):
+def parse(*argvlist, help=False):
     global __unique__
     if __unique__:
         raise Exception("'parse'方法仅能调用一次")
