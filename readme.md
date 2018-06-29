@@ -15,9 +15,7 @@ python setup.py install
 安装完成后，就可以在Python中通过以下方式引入pyargv包：
 ```
 import pyargv
-...
 ```
-
 ## 二、最小示例
 要使用pyargv的参数解析功能，`必须`编写一个主函数，并将主函数用于搭载一个装饰器，通过主函数的参数列表使得代码可以获取到命令行参数。
 ```python
