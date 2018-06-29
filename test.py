@@ -1,19 +1,19 @@
+# test.py
+
 import pyargv
 
 @pyargv.parse(
-    pyargv.Argv("filename"),            # 不带默认参数的普通参数
-    pyargv.Argv("alpha", 13),           # 含有默认参数的普通参数
-    pyargv.KeyValue("beta", "-b", 12),  # 关键词参数
-    pyargv.Boolean("debug"),            # 布尔参数(默认为False)
-    )
-def main(filename, alpha, beta, debug):
-    print("filename:", filename)
-    print("alpha:", alpha)
-    print("beta:", beta)
+    pyargv.Argv("a", default="I'm a"), 
+    pyargv.Argv("b", default="I'm b"),
+    pyargv.Boolean("debug"),
+    pyargv.Boolean("log"),
+    pyargv.Boolean("email"))
+def main(a, b, debug, log, email):
+    print("a:", a)
+    print("b:", b)
     print("debug:", debug)
+    print("log:", log)
+    print("email:", email)
 
 if __name__ == '__main__':
-    try:
-        main()
-    except Exception as e:
-        print(e)
+    main()

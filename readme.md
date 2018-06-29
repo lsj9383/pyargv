@@ -67,8 +67,8 @@ pyargv.parse()装饰器提供了以下4种命令行参数接收方案。
 import pyargv
 
 @pyargv.parse(
-    pyargv.pyargv.Argv("a"), 
-    pyargv.pyargv.Argv("b"))
+    pyargv.Argv("a"), 
+    pyargv.Argv("b"))
 def main(a, b):
     print("a:", a)
     print("b:", b)
@@ -98,6 +98,74 @@ Traceback (most recent call last):
     raise Exception(__argv_cache__[k].ed)
 Exception: missing 1 required argument:'b'
 ```
+这个异常是在被装饰函数进行调用时抛出的，因此较好的处理方式是对该函数的调用进行捕获异常和异常处理:
+```python
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception as e:
+        print(e)
+```
 ### 2.*默认参数*
+在通过命令行传参，但是参数列表中的参数缺失时会抛出异常。可以通过指定参数的默认值，在命令行传参时若没有提供该位置参数，则采用默认值，若提供则采用提供的值。(默认值不局限于位置参数，布尔参数和关键词参数都可以提供默认值)。在参数列表的参数对象初始化时，指定default参数即可。
+```python
+# test.py
+
+import pyargv
+
+@pyargv.parse(
+    pyargv.Argv("a", default="I'm a"), 
+    pyargv.Argv("b", default="I'm b"))
+def main(a, b):
+    print("a:", a)
+    print("b:", b)
+
+if __name__ == '__main__':
+    main()
+```
+在命令行中进行程序调用:
+```
+>> python3 test.py
+
+a: I'm a
+b: I'm b
+```
 ### 3.*布尔参数*
+对于一些开关型参数的表示，若是仅仅通过位置参数来传True或者False，命令行传参的可读性将会特别差。例如程序通过布尔变量表示开启调试模式、开启日志记录、关闭邮件发放，则可能的命令行调用方式将会是`python programe.py True True False`，这看起来非常难受。`pyargv`所提供的布尔参数非常适合于此类开关函数，通过直接写出需要打开的开关即可:
+```
+>> python programe.py --debug --log
+```
+布尔参数在参数列表中通过`pyargv.Boolean`进行指明:
+```python
+# test.py
+
+import pyargv
+
+@pyargv.parse(
+    pyargv.Argv("a", default="I'm a"), 
+    pyargv.Argv("b", default="I'm b"),
+    pyargv.Boolean("debug"),
+    pyargv.Boolean("log"),
+    pyargv.Boolean("email"))
+def main(a, b, debug, log, email):
+    print("a:", a)
+    print("b:", b)
+    print("debug:", debug)
+    print("log:", log)
+    print("email:", email)
+
+if __name__ == '__main__':
+    main()
+```
+命令行中通过`--<key>`的形式，来声明该参数为True，否则为False:
+```
+>> python test.py 1 --debug --log
+
+a: 1
+b: I'm b
+debug: True
+log: True
+email: False
+```
+另外，需要注意的时，布尔参数不受位置限制。这意味着在命令行参数列表中布尔参数可以写在任何位置，在命令行传参中也可以在任何位置写布尔参数。
 ### 4.*关键词参数*

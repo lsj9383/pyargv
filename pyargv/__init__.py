@@ -30,17 +30,17 @@ class BaseArgv:
 # 普通参数
 class Argv(BaseArgv):
     def __init__(self, key, default=None, *, valtype=str, ed=None):
-        super().__init__(key, default, valtype=valtype, ed=ed)
+        super().__init__(key, default=default, valtype=valtype, ed=ed)
 
 # 布尔型参数
 class Boolean(BaseArgv):
-    def __init__(self, key, default=False, *, ed=None):
-        super().__init__(key, default, valtype=bool, ed=ed)
+    def __init__(self, key):
+        super().__init__(key, default=False, valtype=bool, ed=None)
 
 # kv对参数
 class KeyValue(BaseArgv):
     def __init__(self, key, nick=None, default=None, *, valtype=str, ed=None):
-        super().__init__(key, default, valtype=valtype, ed=ed)
+        super().__init__(key, default=default, valtype=valtype, ed=ed)
         self.__nick__ = nick
 
     @property
