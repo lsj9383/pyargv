@@ -54,6 +54,7 @@ debug: True
 仅需要注意，Boolean类型的参数，载命令行中输入的时候，需要添加两个划线。如果生成整个输入参数文档，可以通过`python test.py --help`获得。
 ```sh
 >> python test.py --help
+
 # 命令行输出
 position argv:
   filename   default:None
@@ -92,9 +93,10 @@ if __name__ == '__main__':
     main()
 ```
 通过如下命令行进行调用，并可以得到程序的输出:
-```
+```sh
 >> python test.py 1 2
 
+# 命令行输出
 a: 1
 b: 2
 ```
@@ -138,10 +140,11 @@ def main(a, b):
 if __name__ == '__main__':
     main()
 ```
-在命令行中进行程序调用:
-```
+
+```sh
 >> python3 test.py
 
+# 命令行输出
 a: I'm a
 b: I'm b
 ```
@@ -174,9 +177,10 @@ if __name__ == '__main__':
     main()
 ```
 命令行中通过`--<key>`的形式，来声明该参数为True，否则为False:
-```
+```sh
 >> python test.py 1 --debug --log
 
+# 命令行输出
 a: 1
 b: I'm b
 debug: True
@@ -211,10 +215,11 @@ if __name__ == '__main__':
     main()
 ```
 关键词参数也可以通过default来设置默认值，对于不带默认值的关键词参数若在传参时没有给出参数，同样会抛出异常。在进行关键词参数传参时，其位置是任意的。
-```
+```sh
 >> python3 test.py -n hello
 >> python3 test.py name:hello   # 和上一行等价
 
+# 命令行输出
 a: I'm a
 name: hello
 age: 18
@@ -243,8 +248,10 @@ if __name__ == '__main__':
     main()
 ```
 在命令行传参后，pyargv会将参数字符串转换为其valtype所指定的类型，再交给被修饰的函数。
-```
+```sh
 >> python test.py 1.3 -n hello
+
+# 命令行输出
 alpha: 1.3 <class 'float'>
 name: hello <class 'str'>
 age: 18 <class 'int'>
