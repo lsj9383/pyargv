@@ -1,3 +1,13 @@
+# coding=utf-8
+"""
+    PYARGV
+    author: Arthur
+    github: https://github.com/lsj9383
+    copyright: © 2018 by the Arthur.
+"""
+
+__version__ = '0.1.dev'
+
 import os
 import sys
 from functools import wraps
