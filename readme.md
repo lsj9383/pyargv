@@ -5,7 +5,7 @@
 * 默认参数
 * 关键词参数
 * 类型转换
-* 自动生成帮助文档(*待续*)
+* 自动生成帮助文档
 
 ## 一、安装
 下载本仓库，并进入仓库根目录，通过以下指令安装pyargv包:
@@ -25,7 +25,7 @@ import pyargv
 
 @pyargv.parse(
     pyargv.Argv("filename"),            # 不带默认参数的普通参数
-    pyargv.Argv("alpha", 13),           # 含有默认参数的普通参数
+    pyargv.Argv("alpha", default=13),   # 含有默认参数的普通参数
     pyargv.KeyValue("beta", "-b"),      # 不带默认参数的关键词参数
     pyargv.Boolean("debug"),            # 布尔参数(默认为False)
     )
@@ -41,14 +41,30 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
 ```
-在命令行中输入`python test.py lena.jpg -b 4 --debug`, 则在命令行中将会返回：
-```
+
+```sh
+>> python test.py lena.jpg -b 4 --debug
+
+# 命令行输出
 filename: lena.jpg
 alpha: 13
 beta: 4
 debug: True
 ```
-仅需要注意，Boolean类型的参数，载命令行中输入的时候，需要添加两个划线。
+仅需要注意，Boolean类型的参数，载命令行中输入的时候，需要添加两个划线。如果生成整个输入参数文档，可以通过`python test.py --help`获得。
+```sh
+>> python test.py --help
+# 命令行输出
+position argv:
+  filename   default:None
+  alpha   default:13
+kv argv:
+  --beta <val> | beta:<value>   default:None
+boolean argv:
+  --debug   default:False
+  --help   default:False
+```
+
 
 ## 三、使用详情
 `函数参数列表`是指的在定义函数时列出需要接收哪些参数。为了接收命令行的参数，需要通过装饰器`@pyargv.parse()`指定`命令行参数列表`，再通过函数参数列表来让被装饰的函数接收来自命令汗的参数，类似如下接收方式:

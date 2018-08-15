@@ -14,12 +14,13 @@ from functools import wraps
 
 # 抽象参数
 class BaseArgv:
-    def __init__(self, key, *, default, valtype, ed=None):
+    def __init__(self, key, *, default=None, valtype=str, ed=None, hd=None):
         self.__key__ = key
         self.__default__ = default
         self.__valtype__ = valtype
         # error-description 缺少该参数时的错误描述信息
         self.__ed__ = ed if ed else "missing 1 required argument:'{key}'".format(key=key)
+        self.__hd__ = hd if hd else ""
 
     @property
     def key(self):
@@ -36,6 +37,10 @@ class BaseArgv:
     @property
     def ed(self):
         return self.__ed__
+
+    @property
+    def hd(self):
+        return self.__hd__
 
 # 普通参数
 class Argv(BaseArgv):
@@ -123,12 +128,6 @@ def __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist):
     # kws中载入实际参数
     __fill_kws__(kws, normargs, boolargs, mapargs)
 
-    # 验证是否有未输入的参数
-    __verify_missing_argv__(kws)
-
-    # 类型转换
-    __convert_valtype__(kws)
-
 # 检查参数构造的合法性
 def __verify__(argvlist):
     s = set()
@@ -147,10 +146,10 @@ def __verify__(argvlist):
         s.add(argv.key)
 
 __unique__ = 0
-def parse(*argvlist, help=False):
+def parse(*argvlist):
     global __unique__
     if __unique__:
-        raise Exception("'parse'方法仅能调用一次")
+        raise Exception("'parse' method should call only once")
     __unique__ = 1
     
     # 检验参数构造
@@ -160,11 +159,32 @@ def parse(*argvlist, help=False):
     bool_argvlist = [argv for argv in argvlist if isinstance(argv, Boolean)]
     kv_argvlist = [argv for argv in argvlist if isinstance(argv, KeyValue)]
     norm_argvlist = [argv for argv in argvlist if isinstance(argv, Argv)]
+    bool_argvlist.append(Boolean("help"))
     def wrapper(f):
         @wraps(f)
         def inner(*args, **kws):
             # 根据argvlist的内容，装载kws
             __kwsload__(kws, norm_argvlist, bool_argvlist, kv_argvlist)
-            return f(*args, **kws)
+            if kws.get("help", False) == True:
+                print("position argv:")
+                for norm in norm_argvlist:
+                    print("  {key}  {hd} default:{default}".format(key=norm.key, hd=norm.hd, default=norm.default))
+                print("kv argv:")
+                for kv in kv_argvlist:
+                    print("  --{key} <val> | {key}:<value>  {hd} default:{default}".format(
+                        key=kv.key, hd=kv.hd, default=kv.default))
+                print("boolean argv:")
+                for boolean in bool_argvlist:
+                    print("  --{key}  {hd} default:{default}".format(key=boolean.key, hd=boolean.hd, default=boolean.default))
+            else:
+                # 验证是否有未输入的参数
+                __verify_missing_argv__(kws)
+
+                # 类型转换
+                __convert_valtype__(kws)
+                
+                kws.pop("help")
+                return f(*args, **kws)
+            
         return inner
     return wrapper

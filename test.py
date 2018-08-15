@@ -1,18 +1,19 @@
-# test.py
-
 import pyargv
 
 @pyargv.parse(
-    pyargv.Argv("alpha", valtype=float),
-    pyargv.KeyValue("name", "-n"),
-    pyargv.KeyValue("age", "-a", default="18", valtype=int),
-    pyargv.Boolean("debug"),
+    pyargv.Argv("filename"),            # 不带默认参数的普通参数
+    pyargv.Argv("alpha", default=13),   # 含有默认参数的普通参数
+    pyargv.KeyValue("beta", "-b"),      # 不带默认参数的关键词参数
+    pyargv.Boolean("debug"),            # 布尔参数(默认为False)
     )
-def main(alpha, name, age, debug):
-    print("alpha:", alpha, type(alpha))
-    print("name:", name, type(name))
-    print("age:", age, type(age))
-    print("debug:", debug, type(debug))
+def main(filename, alpha, beta, debug):
+    print("filename:", filename)
+    print("alpha:", alpha)
+    print("beta:", beta)
+    print("debug:", debug)
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(e)
