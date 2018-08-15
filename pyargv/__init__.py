@@ -6,7 +6,7 @@
     copyright: © 2018 by the Arthur.
 """
 
-__version__ = '0.1.dev'
+__version__ = '0.2.dev'
 
 import os
 import sys
