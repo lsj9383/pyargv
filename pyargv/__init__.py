@@ -6,7 +6,7 @@
     copyright: © 2018 by the Arthur.
 """
 
-__version__ = '0.2.dev'
+__version__ = '0.3.dev'
 __space__ = "~!@#$%^&*"
 
 import os
