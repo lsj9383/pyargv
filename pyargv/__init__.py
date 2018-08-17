@@ -7,6 +7,7 @@
 """
 
 __version__ = '0.2.dev'
+__space__ = "~!@#$%^&*"
 
 import os
 import sys
@@ -64,7 +65,8 @@ class KeyValue(BaseArgv):
 
 # 根据kv对的nick重构输入的命令行参数
 def __refactor_cmdargv__(kv_argvlist):
-    argvline = " ".join(sys.argv[1:])
+    proc_argv = [item.replace(" ", __space__) for item in sys.argv]
+    argvline = " ".join(proc_argv[1:])
     for argv in kv_argvlist:
         argvline = argvline.replace(argv.nick+" ", argv.key+":")
     cmdargv = argvline.split(" ") if argvline else []
@@ -183,8 +185,14 @@ def parse(*argvlist):
                 # 类型转换
                 __convert_valtype__(kws)
                 
+                # 避免help参数传入
                 kws.pop("help")
-                return f(*args, **kws)
+
+                # 替换空格
+                newkws = {}
+                for k,v in kws.items():
+                    newkws[k] = v if not isinstance(v, str) else v.replace(__space__, " ")
+                return f(*args, **newkws)
             
         return inner
     return wrapper
